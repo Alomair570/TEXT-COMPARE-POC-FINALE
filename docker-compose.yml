@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    ports:
+      - 3000:3000
+      
+  backend:
+    container_name: backend
+    build: ./backend
+    expose:
+      - "8000"
+
+  njinx:
+    container_name: njinx
+    build: ./Nginx
+    expose: 
+      - "8080"
