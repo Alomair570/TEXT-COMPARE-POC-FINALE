@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { IconButton, Typography } from "@material-tailwind/react";
 import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 
+//set the amount of items per one page for the results DO NOT CHANGE THE PAGE VARIABLE
 const items = 5;
 var page = 1;
 
@@ -15,7 +16,7 @@ function Comparator() {
   const [file, setFile] = useState<File | null>(null);
   const [windState, setwindState] = useState("Null");
   const [result, setResult] = useState({ score: 0, reasons: "ERROR" }); //result is for only two words are compared
-  const [active, setActive] = React.useState(1);
+  const [active, setActive] = React.useState(1); //the loaded page in pagination
   const [loadState, setLoadState] = useState(false);
   //array of result when a csv is used
   const [arrResult, setArrResult] = useState([
@@ -40,7 +41,7 @@ function Comparator() {
     if (e.target.files) {
       setFile(e.target.files[0]);
       const selectedFile = e.target.files[0];
-      setSecondary(" تم رفع الملف بنجاح");
+      setSecondary("تم رفع الملف بنجاح");
     }
   };
 
@@ -48,13 +49,10 @@ function Comparator() {
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     if (file == null) {
       setwindState("word");
-      console.log("flaf");
       const response = await fetch(
-        `http://njinx/comparison/${secondary}/${primary}`
+        `http://localhost:8080/comparison/${secondary}/${primary}`
       );
-      console.log(response);
       setResult(await response.json());
-      console.log(result.score);
     } else {
       setwindState("scv");
       setLoadState(true);
@@ -63,12 +61,14 @@ function Comparator() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch(`http://njinx/uploadfile/${primary}`, {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `http://localhost:8080/uploadfile/${primary}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
       console.log(formData);
-      // console.log(await response.json());
       const data = await response.json();
 
       // set the number of pages for the pagination
@@ -119,8 +119,10 @@ function Comparator() {
           </svg>
         </div>
       </div>;
-    }
-    if ((primary == "" || secondary == "") && (primary == "" || file == null)) {
+    } else if (
+      (primary == "" || secondary == "") &&
+      (primary == "" || file == null)
+    ) {
       return (
         <div>
           <button
@@ -209,6 +211,7 @@ function Comparator() {
 
   //this is the component for the table with the results
   function ResultWindow() {
+    //Depending on the type of comparison different windows will be used
     if (windState == "Null") {
       return (
         <table className="table-auto bg-[#ffffff] border-[#D0D0D0] rounded-sm m-3 border w-8/12 h-[100px] mb-10"></table>

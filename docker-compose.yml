@@ -16,5 +16,5 @@ services:
   njinx:
     container_name: njinx
     build: ./Nginx
-    expose: 
-      - "8080"
+    ports: 
+      - 8080:8080

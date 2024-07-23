@@ -1,6 +1,6 @@
 
 import operator
-from fastapi import FastAPI, File, UploadFile, Request
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 import csv
 
@@ -43,11 +43,7 @@ async def root():
 
 
 @app.get("/comparison/{secondary}/{primary}")
-async def return_result(secondary:str,primary: str, request: Request):
-    my_header = request.headers.get('access-control-allow-origin')
-    print(my_header)
-    print("primary" + primary)
-    print("secondady"+ secondary)
+async def return_result(secondary:str,primary: str):
     score, reasons_list = get_score(primary, secondary)
     reasons = ", ".join(reasons_list)  # Join the list into a single string
     return {"score": score, "reasons": reasons}
@@ -61,13 +57,9 @@ async def run_task_in_background(primary: str, file: UploadFile = File(...)):
 
     results.clear()
     await create_upload_file(primary, file_path)
-    # print(results)
     sorted_list = sorted(results, key=operator.itemgetter('score'))
     sorted_list.reverse()
     return sorted_list
-
-# # Background task function
-# async def run_background_task(primary: str, file: str):
     
     
 def process_chunk(primary: str, chunk):
